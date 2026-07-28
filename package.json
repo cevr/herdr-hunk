@@ -1,6 +1,6 @@
 {
   "name": "@cvr/herdr-hunk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Send Hunk review notes to the correct Herdr agent pane",
   "license": "MIT",
   "repository": {
