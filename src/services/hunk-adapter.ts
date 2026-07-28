@@ -112,7 +112,7 @@ export class HunkAdapter extends Context.Service<HunkAdapter, HunkAdapterShape>(
       });
 
       return {
-        run: (cwd) => run('Run Hunk', ['diff'], cwd, true),
+        run: (cwd) => run('Run Hunk', ['diff', '--watch'], cwd, true),
 
         findSession: (cwd, parentProcessId) =>
           Effect.gen(function* () {

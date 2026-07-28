@@ -4,7 +4,8 @@ Review a worktree in Hunk. Send saved notes to the Herdr agent pane that opened
 the review.
 
 Hunk opens in a new Herdr tab. This layout works well on small remote screens.
-The plugin stores the source pane ID. It never broadcasts notes to other agents.
+The diff refreshes when the agent changes the worktree. The plugin stores the
+source pane ID. It never broadcasts notes to other agents.
 
 ## Requirements
 
