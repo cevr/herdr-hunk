@@ -1,0 +1,27 @@
+id = "cvr.herdr-hunk"
+name = "Hunk Review"
+version = "0.1.0"
+min_herdr_version = "0.7.5"
+description = "Review changes in Hunk and send notes to the source agent pane"
+platforms = ["linux", "macos"]
+
+[[build]]
+command = ["bun", "install", "--frozen-lockfile"]
+
+[[actions]]
+id = "open"
+title = "Open Hunk review"
+contexts = ["pane"]
+command = ["bin/herdr-hunk", "open"]
+
+[[actions]]
+id = "send"
+title = "Send Hunk notes"
+contexts = ["pane"]
+command = ["bin/herdr-hunk", "send"]
+
+[[panes]]
+id = "review"
+title = "Hunk"
+placement = "tab"
+command = ["sh", "-c", "exec \"$HERDR_PLUGIN_ROOT/bin/herdr-hunk\" review"]
