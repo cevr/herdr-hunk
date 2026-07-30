@@ -34,7 +34,8 @@ const PaneProcessInfoResponse = Schema.Struct({
   result: Schema.Struct({
     type: Schema.Literal('pane_process_info'),
     process_info: Schema.Struct({
-      shell_pid: Schema.Number,
+      // Herdr sends null when the pane has no shell process.
+      shell_pid: Schema.NullOr(Schema.Number),
     }),
   }),
 });
@@ -153,9 +154,18 @@ export class HerdrAdapter extends Context.Service<HerdrAdapter, HerdrAdapterShap
               });
             }
 
+            const shellProcessId = processResponse.result.process_info.shell_pid;
+
+            if (shellProcessId === null) {
+              return yield* new BridgeError({
+                operation: 'Find source agent',
+                message: 'The Hunk pane has no shell process.',
+              });
+            }
+
             return {
               originPaneId,
-              processId: processResponse.result.process_info.shell_pid,
+              processId: shellProcessId,
             };
           }),
 

@@ -1,10 +1,13 @@
-import { Schema } from 'effect';
+import { Effect, Schema } from 'effect';
 
+import { BridgeError } from './errors.js';
+
+// Herdr sends null for these fields when no pane or workspace has focus.
 export const PluginInvocationContext = Schema.Struct({
-  workspace_id: Schema.String,
-  focused_pane_id: Schema.String,
-  focused_pane_cwd: Schema.String,
-  focused_pane_agent: Schema.optional(Schema.String),
+  workspace_id: Schema.NullOr(Schema.String),
+  focused_pane_id: Schema.NullOr(Schema.String),
+  focused_pane_cwd: Schema.NullOr(Schema.String),
+  focused_pane_agent: Schema.optional(Schema.NullOr(Schema.String)),
 });
 
 export type PluginInvocationContext = typeof PluginInvocationContext.Type;
@@ -17,6 +20,39 @@ export const ReviewOrigin = Schema.Struct({
 });
 
 export type ReviewOrigin = typeof ReviewOrigin.Type;
+
+export const originFromPluginContext = (
+  context: PluginInvocationContext,
+): Effect.Effect<ReviewOrigin, BridgeError> => {
+  const {
+    workspace_id: workspaceId,
+    focused_pane_id: paneId,
+    focused_pane_cwd: cwd,
+    focused_pane_agent: agentLabel,
+  } = context;
+
+  if (workspaceId === null) {
+    return Effect.fail(
+      new BridgeError({
+        operation: 'Read Herdr context',
+        message: 'There is no focused workspace.',
+      }),
+    );
+  }
+  if (paneId === null || cwd === null) {
+    return Effect.fail(
+      new BridgeError({
+        operation: 'Read Herdr context',
+        message: 'There is no focused pane.',
+      }),
+    );
+  }
+  if (agentLabel === undefined || agentLabel === null) {
+    return Effect.succeed(ReviewOrigin.make({ workspaceId, paneId, cwd }));
+  }
+
+  return Effect.succeed(ReviewOrigin.make({ workspaceId, paneId, cwd, agentLabel }));
+};
 
 const LineRange = Schema.Tuple([Schema.Number, Schema.Number]);
 

@@ -6,7 +6,11 @@ import { Command } from 'effect/unstable/cli';
 
 import { ReviewBridge } from './review-bridge.js';
 import { BridgeError } from './domain/errors.js';
-import { PluginInvocationContext, ReviewOrigin, ReviewPaneContext } from './domain/review.js';
+import {
+  originFromPluginContext,
+  PluginInvocationContext,
+  ReviewPaneContext,
+} from './domain/review.js';
 import { HerdrAdapter } from './services/herdr-adapter.js';
 import { HunkAdapter } from './services/hunk-adapter.js';
 
@@ -46,20 +50,7 @@ const decodePluginContext = Effect.fn('decodePluginContext')(function* () {
     ),
   );
 
-  if (context.focused_pane_agent === undefined) {
-    return ReviewOrigin.make({
-      workspaceId: context.workspace_id,
-      paneId: context.focused_pane_id,
-      cwd: context.focused_pane_cwd,
-    });
-  }
-
-  return ReviewOrigin.make({
-    workspaceId: context.workspace_id,
-    paneId: context.focused_pane_id,
-    cwd: context.focused_pane_cwd,
-    agentLabel: context.focused_pane_agent,
-  });
+  return yield* originFromPluginContext(context);
 });
 
 const openCommand = Command.make('open', {}, () =>

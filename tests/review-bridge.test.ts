@@ -3,7 +3,12 @@ import { describe, expect, it } from 'effect-bun-test';
 
 import { ReviewBridge } from '../src/review-bridge.js';
 import { BridgeError } from '../src/domain/errors.js';
-import { type ReviewNote, ReviewOrigin, ReviewPaneContext } from '../src/domain/review.js';
+import {
+  originFromPluginContext,
+  type ReviewNote,
+  ReviewOrigin,
+  ReviewPaneContext,
+} from '../src/domain/review.js';
 import { HerdrAdapter } from '../src/services/herdr-adapter.js';
 import { HunkAdapter } from '../src/services/hunk-adapter.js';
 
@@ -163,4 +168,18 @@ describe('ReviewBridge', () => {
       expect(clearCount).toBe(0);
     }).pipe(Effect.provide(ReviewBridge.layer), Effect.provide(herdr), Effect.provide(hunk));
   });
+
+  it.effect('fails with a readable error when no pane has focus', () =>
+    Effect.gen(function* () {
+      const error = yield* originFromPluginContext({
+        workspace_id: 'workspace-1',
+        focused_pane_id: null,
+        focused_pane_cwd: null,
+        focused_pane_agent: null,
+      }).pipe(Effect.flip);
+
+      expect(error).toBeInstanceOf(BridgeError);
+      expect(error.message).toBe('There is no focused pane.');
+    }),
+  );
 });
