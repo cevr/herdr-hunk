@@ -25,7 +25,26 @@
           "anyUnknownInErrorContext": "error",
           "missingEffectServiceDependency": "warning",
           "strictEffectProvide": "warning",
-          "runEffectInsideEffect": "error"
+          "runEffectInsideEffect": "error",
+          "asyncFunction": "off",
+          "cryptoRandomUUID": "off",
+          "cryptoRandomUUIDInEffect": "off",
+          "globalConsole": "off",
+          "globalConsoleInEffect": "off",
+          "globalDate": "off",
+          "globalDateInEffect": "off",
+          "globalFetch": "off",
+          "globalFetchInEffect": "off",
+          "globalRandom": "off",
+          "globalRandomInEffect": "off",
+          "globalTimers": "off",
+          "globalTimersInEffect": "off",
+          "newPromise": "off",
+          "nodeBuiltinImport": "off",
+          "preferSchemaOverJson": "off",
+          "processEnv": "off",
+          "processEnvInEffect": "off",
+          "tryCatchInEffectGen": "off"
         },
         "overrides": [
           {

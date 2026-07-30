@@ -12,7 +12,14 @@ import { HunkAdapter } from './services/hunk-adapter.js';
 
 declare const __VERSION__: string | undefined;
 
-const version = typeof __VERSION__ === 'string' ? __VERSION__ : '0.0.0-dev';
+const resolveVersion = (): string => {
+  if (typeof __VERSION__ === 'string') {
+    return __VERSION__;
+  }
+  return '0.0.0-dev';
+};
+
+const version = resolveVersion();
 
 const readRequiredConfig = (key: string): Effect.Effect<string, BridgeError> =>
   Config.string(key).pipe(
@@ -39,11 +46,19 @@ const decodePluginContext = Effect.fn('decodePluginContext')(function* () {
     ),
   );
 
+  if (context.focused_pane_agent === undefined) {
+    return ReviewOrigin.make({
+      workspaceId: context.workspace_id,
+      paneId: context.focused_pane_id,
+      cwd: context.focused_pane_cwd,
+    });
+  }
+
   return ReviewOrigin.make({
     workspaceId: context.workspace_id,
     paneId: context.focused_pane_id,
     cwd: context.focused_pane_cwd,
-    ...(context.focused_pane_agent === undefined ? {} : { agentLabel: context.focused_pane_agent }),
+    agentLabel: context.focused_pane_agent,
   });
 });
 

@@ -50,7 +50,7 @@ export class HunkAdapter extends Context.Service<HunkAdapter, HunkAdapterShape>(
         cwd?: string,
       ) {
         return yield* spawner
-          .string(ChildProcess.make('hunk', args, cwd === undefined ? {} : { cwd }), {
+          .string(ChildProcess.make('hunk', args, { cwd }), {
             includeStderr: true,
           })
           .pipe(Effect.mapError((cause) => hunkError(operation, cause)));
@@ -81,6 +81,23 @@ export class HunkAdapter extends Context.Service<HunkAdapter, HunkAdapterShape>(
         return false;
       });
 
+      const makeHunkCommand = (
+        args: ReadonlyArray<string>,
+        cwd: string,
+        inheritStdio: boolean,
+      ): ChildProcess.Command => {
+        if (inheritStdio) {
+          return ChildProcess.make('hunk', args, {
+            cwd,
+            detached: false,
+            stdin: 'inherit',
+            stdout: 'inherit',
+            stderr: 'inherit',
+          });
+        }
+        return ChildProcess.make('hunk', args, { cwd, detached: false });
+      };
+
       const run = Effect.fn('HunkAdapter.run')(function* (
         operation: string,
         args: ReadonlyArray<string>,
@@ -88,19 +105,7 @@ export class HunkAdapter extends Context.Service<HunkAdapter, HunkAdapterShape>(
         inheritStdio = false,
       ) {
         const exitCode = yield* spawner
-          .exitCode(
-            ChildProcess.make('hunk', args, {
-              cwd,
-              detached: false,
-              ...(inheritStdio
-                ? {
-                    stdin: 'inherit' as const,
-                    stdout: 'inherit' as const,
-                    stderr: 'inherit' as const,
-                  }
-                : {}),
-            }),
-          )
+          .exitCode(makeHunkCommand(args, cwd, inheritStdio))
           .pipe(Effect.mapError((cause) => hunkError(operation, cause)));
 
         if (exitCode !== 0) {

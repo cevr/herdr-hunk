@@ -1,4 +1,4 @@
-import { Context, Effect, Layer, Schema } from 'effect';
+import { Config, Context, Effect, Layer, Schema } from 'effect';
 import { ChildProcess, ChildProcessSpawner } from 'effect/unstable/process';
 
 import { BridgeError } from '../domain/errors.js';
@@ -60,7 +60,10 @@ export class HerdrAdapter extends Context.Service<HerdrAdapter, HerdrAdapterShap
     HerdrAdapter,
     Effect.gen(function* () {
       const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-      const herdrExecutable = process.env['HERDR_BIN_PATH'] ?? 'herdr';
+      const herdrExecutable = yield* Config.string('HERDR_BIN_PATH').pipe(
+        Config.withDefault('herdr'),
+        Effect.orDie,
+      );
 
       const run = Effect.fn('HerdrAdapter.run')(function* (
         operation: string,

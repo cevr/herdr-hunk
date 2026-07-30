@@ -50,16 +50,29 @@ export interface ReviewRoute {
   readonly processId: number;
 }
 
+const formatNoteLine = (note: ReviewNote): string => {
+  const lineNumber = note.newRange?.[0] ?? note.oldRange?.[0];
+  if (lineNumber !== undefined) {
+    return String(lineNumber);
+  }
+  if (note.hunkIndex === undefined) {
+    return '?';
+  }
+  return `hunk ${note.hunkIndex + 1}`;
+};
+
+const formatNoteSide = (note: ReviewNote): string => {
+  if (note.newRange === undefined) {
+    return 'old';
+  }
+  return 'new';
+};
+
 export const formatReviewNotes = (notes: ReadonlyArray<ReviewNote>): string => {
   const formattedNotes = notes.map((note) => {
-    const line =
-      note.newRange?.[0] ??
-      note.oldRange?.[0] ??
-      (note.hunkIndex === undefined ? '?' : `hunk ${note.hunkIndex + 1}`);
-    const side = note.newRange === undefined ? 'old' : 'new';
     const body = note.body.replaceAll(/\s+/g, ' ').trim();
 
-    return `[${note.filePath}:${line} ${side}] ${body}`;
+    return `[${note.filePath}:${formatNoteLine(note)} ${formatNoteSide(note)}] ${body}`;
   });
 
   return `Review notes from Hunk: ${formattedNotes.join(' | ')} Please address these notes. Keep unrelated code unchanged.`;

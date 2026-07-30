@@ -19,7 +19,7 @@
         "lefthook": "^2.1.10",
         "oxfmt": "^0.61.0",
         "oxlint": "^1.76.0",
-        "oxlint-plugin-effect": "^0.2.3",
+        "oxlint-plugin-effect": "^0.5.0",
         "typescript": "^7.0.2",
       },
     },
@@ -433,7 +433,7 @@
 
     "oxlint": ["oxlint@1.76.0", "", { "optionalDependencies": { "@oxlint/binding-android-arm-eabi": "1.76.0", "@oxlint/binding-android-arm64": "1.76.0", "@oxlint/binding-darwin-arm64": "1.76.0", "@oxlint/binding-darwin-x64": "1.76.0", "@oxlint/binding-freebsd-x64": "1.76.0", "@oxlint/binding-linux-arm-gnueabihf": "1.76.0", "@oxlint/binding-linux-arm-musleabihf": "1.76.0", "@oxlint/binding-linux-arm64-gnu": "1.76.0", "@oxlint/binding-linux-arm64-musl": "1.76.0", "@oxlint/binding-linux-ppc64-gnu": "1.76.0", "@oxlint/binding-linux-riscv64-gnu": "1.76.0", "@oxlint/binding-linux-riscv64-musl": "1.76.0", "@oxlint/binding-linux-s390x-gnu": "1.76.0", "@oxlint/binding-linux-x64-gnu": "1.76.0", "@oxlint/binding-linux-x64-musl": "1.76.0", "@oxlint/binding-openharmony-arm64": "1.76.0", "@oxlint/binding-win32-arm64-msvc": "1.76.0", "@oxlint/binding-win32-ia32-msvc": "1.76.0", "@oxlint/binding-win32-x64-msvc": "1.76.0" }, "peerDependencies": { "oxlint-tsgolint": ">=7.0.2001", "vite-plus": "*" }, "optionalPeers": ["oxlint-tsgolint", "vite-plus"], "bin": { "oxlint": "bin/oxlint" } }, "sha512-6QoFioEU4fNdiUx/2Eo6TRd6NG7H7njnRCz8rhB66cZmMHDTqcm1Rjvl8Wry+ZTQMBAmyb4Mlf62Mk5X+eHSOw=="],
 
-    "oxlint-plugin-effect": ["oxlint-plugin-effect@0.2.3", "", { "dependencies": { "@oxlint/plugins": "^1.64.0" }, "peerDependencies": { "effect": ">=4.0.0-beta.66 <5" } }, "sha512-LwQdPvpNsCh/d3R4Xkmw8zoBUktWG8hgIfu3b7TTnXM1UjUG2bxPpHtHL+b9t/pnwOCHeyVJK/7fpvDRnpW2IA=="],
+    "oxlint-plugin-effect": ["oxlint-plugin-effect@0.5.0", "", { "dependencies": { "@oxlint/plugins": "^1.64.0" }, "peerDependencies": { "effect": ">=4.0.0-beta.66 <5" } }, "sha512-vsgOVxdt24OTIv2cLzHvGlKnJ3Fb36s/JHrKzgIST3McuXU1dSl7maXVPVbjDF7Y49wgWvZxtyQiKqNuzGijPQ=="],
 
     "p-filter": ["p-filter@2.1.0", "", { "dependencies": { "p-map": "^2.0.0" } }, "sha512-ZBxxZ5sL2HghephhpGAQdoskxplTwr7ICaehZwLIlfL6acuVgZPm8yBNuRAFBGEqtD/hmUeq9eqLg2ys9Xr/yw=="],
 

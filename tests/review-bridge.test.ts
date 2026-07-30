@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'bun:test';
 import { Effect } from 'effect';
+import { describe, expect, it } from 'effect-bun-test';
 
 import { ReviewBridge } from '../src/review-bridge.js';
 import { BridgeError } from '../src/domain/errors.js';
@@ -38,7 +38,7 @@ const reviewPaneContext = ReviewPaneContext.make({
 });
 
 describe('ReviewBridge', () => {
-  it('opens the review for the exact source pane', async () => {
+  it.effect('opens the review for the exact source pane', () => {
     const openedOrigins: Array<typeof origin> = [];
     const herdr = HerdrAdapter.layerTest({
       openReviewTab: (value) => Effect.sync(() => openedOrigins.push(value)),
@@ -50,21 +50,19 @@ describe('ReviewBridge', () => {
       sendText: () => Effect.void,
     });
 
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const bridge = yield* ReviewBridge;
-        yield* bridge.open(origin);
-      }).pipe(
-        Effect.provide(ReviewBridge.layer),
-        Effect.provide(herdr),
-        Effect.provide(noHunkEffects),
-      ),
-    );
+    return Effect.gen(function* () {
+      const bridge = yield* ReviewBridge;
+      yield* bridge.open(origin);
 
-    expect(openedOrigins).toEqual([origin]);
+      expect(openedOrigins).toEqual([origin]);
+    }).pipe(
+      Effect.provide(ReviewBridge.layer),
+      Effect.provide(herdr),
+      Effect.provide(noHunkEffects),
+    );
   });
 
-  it('sends notes to the source pane and clears them after delivery', async () => {
+  it.effect('sends notes to the source pane and clears them after delivery', () => {
     const deliveries: Array<{ paneId: string; text: string }> = [];
     let clearCount = 0;
     const herdr = HerdrAdapter.layerTest({
@@ -89,23 +87,21 @@ describe('ReviewBridge', () => {
         }),
     });
 
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const bridge = yield* ReviewBridge;
-        yield* bridge.send(reviewPaneContext);
-      }).pipe(Effect.provide(ReviewBridge.layer), Effect.provide(herdr), Effect.provide(hunk)),
-    );
+    return Effect.gen(function* () {
+      const bridge = yield* ReviewBridge;
+      yield* bridge.send(reviewPaneContext);
 
-    expect(deliveries).toEqual([
-      {
-        paneId: 'workspace-1:pane-agent',
-        text: 'Review notes from Hunk: [src/main.ts:42 new] Keep this invariant. Add a regression test. Please address these notes. Keep unrelated code unchanged.',
-      },
-    ]);
-    expect(clearCount).toBe(1);
+      expect(deliveries).toEqual([
+        {
+          paneId: 'workspace-1:pane-agent',
+          text: 'Review notes from Hunk: [src/main.ts:42 new] Keep this invariant. Add a regression test. Please address these notes. Keep unrelated code unchanged.',
+        },
+      ]);
+      expect(clearCount).toBe(1);
+    }).pipe(Effect.provide(ReviewBridge.layer), Effect.provide(herdr), Effect.provide(hunk));
   });
 
-  it('rejects an empty review before delivery', async () => {
+  it.effect('rejects an empty review before delivery', () => {
     let sendCount = 0;
     const herdr = HerdrAdapter.layerTest({
       openReviewTab: () => Effect.void,
@@ -120,22 +116,20 @@ describe('ReviewBridge', () => {
         }),
     });
 
-    const result = await Effect.runPromise(
-      Effect.gen(function* () {
-        const bridge = yield* ReviewBridge;
-        return yield* bridge.send(reviewPaneContext).pipe(Effect.flip);
-      }).pipe(
-        Effect.provide(ReviewBridge.layer),
-        Effect.provide(herdr),
-        Effect.provide(noHunkEffects),
-      ),
-    );
+    return Effect.gen(function* () {
+      const bridge = yield* ReviewBridge;
+      const result = yield* bridge.send(reviewPaneContext).pipe(Effect.flip);
 
-    expect(result.message).toContain('Save at least one Hunk note');
-    expect(sendCount).toBe(0);
+      expect(result.message).toContain('Save at least one Hunk note');
+      expect(sendCount).toBe(0);
+    }).pipe(
+      Effect.provide(ReviewBridge.layer),
+      Effect.provide(herdr),
+      Effect.provide(noHunkEffects),
+    );
   });
 
-  it('keeps notes when delivery fails', async () => {
+  it.effect('keeps notes when delivery fails', () => {
     let clearCount = 0;
     const herdr = HerdrAdapter.layerTest({
       openReviewTab: () => Effect.void,
@@ -162,13 +156,11 @@ describe('ReviewBridge', () => {
         }),
     });
 
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const bridge = yield* ReviewBridge;
-        return yield* bridge.send(reviewPaneContext).pipe(Effect.flip);
-      }).pipe(Effect.provide(ReviewBridge.layer), Effect.provide(herdr), Effect.provide(hunk)),
-    );
+    return Effect.gen(function* () {
+      const bridge = yield* ReviewBridge;
+      yield* bridge.send(reviewPaneContext).pipe(Effect.flip);
 
-    expect(clearCount).toBe(0);
+      expect(clearCount).toBe(0);
+    }).pipe(Effect.provide(ReviewBridge.layer), Effect.provide(herdr), Effect.provide(hunk));
   });
 });
