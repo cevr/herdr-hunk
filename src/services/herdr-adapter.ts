@@ -35,7 +35,7 @@ const PaneProcessInfoResponse = Schema.Struct({
     type: Schema.Literal('pane_process_info'),
     process_info: Schema.Struct({
       // Herdr sends null when the pane has no shell process.
-      shell_pid: Schema.NullOr(Schema.Number),
+      shell_pid: Schema.NullOr(Schema.Finite),
     }),
   }),
 });

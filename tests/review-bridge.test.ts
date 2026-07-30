@@ -1,4 +1,4 @@
-import { Effect } from 'effect';
+import { Effect, Layer } from 'effect';
 import { describe, expect, it } from 'effect-bun-test';
 
 import { ReviewBridge } from '../src/review-bridge.js';
@@ -61,9 +61,7 @@ describe('ReviewBridge', () => {
 
       expect(openedOrigins).toEqual([origin]);
     }).pipe(
-      Effect.provide(ReviewBridge.layer),
-      Effect.provide(herdr),
-      Effect.provide(noHunkEffects),
+      Effect.provide(ReviewBridge.layer.pipe(Layer.provide(Layer.mergeAll(herdr, noHunkEffects)))),
     );
   });
 
@@ -103,7 +101,7 @@ describe('ReviewBridge', () => {
         },
       ]);
       expect(clearCount).toBe(1);
-    }).pipe(Effect.provide(ReviewBridge.layer), Effect.provide(herdr), Effect.provide(hunk));
+    }).pipe(Effect.provide(ReviewBridge.layer.pipe(Layer.provide(Layer.mergeAll(herdr, hunk)))));
   });
 
   it.effect('rejects an empty review before delivery', () => {
@@ -128,9 +126,7 @@ describe('ReviewBridge', () => {
       expect(result.message).toContain('Save at least one Hunk note');
       expect(sendCount).toBe(0);
     }).pipe(
-      Effect.provide(ReviewBridge.layer),
-      Effect.provide(herdr),
-      Effect.provide(noHunkEffects),
+      Effect.provide(ReviewBridge.layer.pipe(Layer.provide(Layer.mergeAll(herdr, noHunkEffects)))),
     );
   });
 
@@ -166,7 +162,7 @@ describe('ReviewBridge', () => {
       yield* bridge.send(reviewPaneContext).pipe(Effect.flip);
 
       expect(clearCount).toBe(0);
-    }).pipe(Effect.provide(ReviewBridge.layer), Effect.provide(herdr), Effect.provide(hunk));
+    }).pipe(Effect.provide(ReviewBridge.layer.pipe(Layer.provide(Layer.mergeAll(herdr, hunk)))));
   });
 
   it.effect('fails with a readable error when no pane has focus', () =>

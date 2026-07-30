@@ -16,7 +16,7 @@ const HunkSessionList = Schema.Struct({
   sessions: Schema.Array(
     Schema.Struct({
       sessionId: Schema.String,
-      pid: Schema.Number,
+      pid: Schema.Finite,
       cwd: Schema.String,
     }),
   ),

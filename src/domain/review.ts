@@ -54,13 +54,13 @@ export const originFromPluginContext = (
   return Effect.succeed(ReviewOrigin.make({ workspaceId, paneId, cwd, agentLabel }));
 };
 
-const LineRange = Schema.Tuple([Schema.Number, Schema.Number]);
+const LineRange = Schema.Tuple([Schema.Finite, Schema.Finite]);
 
 export const ReviewNote = Schema.Struct({
   noteId: Schema.String,
   source: Schema.Literal('user'),
   filePath: Schema.String,
-  hunkIndex: Schema.optional(Schema.Number),
+  hunkIndex: Schema.optional(Schema.Finite),
   oldRange: Schema.optional(LineRange),
   newRange: Schema.optional(LineRange),
   body: Schema.String,
